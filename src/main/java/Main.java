@@ -1,5 +1,3 @@
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -7,14 +5,10 @@ import java.util.Set;
  */
 public class Main {
   public static void main(String[] args) {
-    String pathToFile = "";
-    FileQuestionProvider fileQuestionProvider = new FileQuestionProvider("C:\\questionAsker\\src\\main\\resources\\QuestionsDB.json");
+    String pathToFile = "src/main/resources/QuestionsDB.json";
+    FileQuestionProvider fileQuestionProvider = new FileQuestionProvider(pathToFile);
     QuestionAskerMenu questionAskerMenu = new QuestionAskerMenuImpl();
     Set<Question> questions = fileQuestionProvider.getQuestions();
-//    Set<Question> questions = new HashSet<>();
-//    questions.add(new Question("some question1", Arrays.asList("a", "b", "c")));
-//    questions.add(new Question("some question2", Arrays.asList("b", "a", "c")));
-//    questions.add(new Question("some question3", Arrays.asList("c", "b", "a")));
-//    questionAskerMenu.buildMenu(questions);
+    questionAskerMenu.buildMenu(questions);
   }
 }
