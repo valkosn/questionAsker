@@ -28,4 +28,9 @@ public class Question {
     public void setAnswer(List<String> answer) {
         this.answer = answer;
     }
+
+    @Override
+    public String toString() {
+        return "question:[" + question + "], answer " + answer.toString();
+    }
 }

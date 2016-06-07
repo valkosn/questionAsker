@@ -1,6 +1,6 @@
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,24 +21,46 @@ public class FileQuestionProvider implements QuestionProvider {
 
     @Override
     public Set<Question> getQuestions() {
-        jsonData = readFile(filePath);
-        JSONObject jsonObject = new JSONObject();
+        JSONParser parser = new JSONParser();
+        String s = "";
 
-        JSONArray jsons = new JSONArray(jsonData);
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
 
+            Object obj = parser.parse(br);
+            JSONArray array = (JSONArray)obj;
 
+            System.out.println("The 2nd element of array");
+            System.out.println(array.get(1));
+            System.out.println();
 
+            JSONObject obj2 = (JSONObject)array.get(1);
+            System.out.println("Field \"1\"");
+            System.out.println(obj2.get("1"));
 
-        String question = jsonObject.getString("question");
-        JSONArray answers = new JSONArray(jsonObject.getJSONArray("answers").toString());
+            s = "{}";
+            obj = parser.parse(s);
+            System.out.println(obj);
 
-        List<String> answersList = new ArrayList<>();
-        for (int i = 0; i < answers.length(); i++) {
-            answersList.add(answers.getString(i));
+            s = "[5,]";
+            obj = parser.parse(s);
+            System.out.println(obj);
+
+            s = "[5,,2]";
+            obj = parser.parse(s);
+            System.out.println(obj);
+        }catch(Exception pe){
+
+            pe.printStackTrace();
+            System.out.println(pe);
         }
-        questions.add(new Question(question, answersList));
-
-        return questions;
+//
+//        JSONArray arr = obj.getJSONArray("posts");
+//        for (int i = 0; i < arr.length(); i++)
+//        {
+//            String post_id = arr.getJSONObject(i).getString("post_id");
+//        }
+        return Collections.emptySet();
     }
 
     private String readFile(String filename) {
@@ -55,6 +77,6 @@ public class FileQuestionProvider implements QuestionProvider {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result.trim();
+        return result;
     }
 }
