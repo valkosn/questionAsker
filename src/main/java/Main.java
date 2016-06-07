@@ -5,7 +5,7 @@ import java.util.Set;
  */
 public class Main {
   public static void main(String[] args) {
-    String pathToFile = "src/main/resources/QuestionsDB.json";
+    String pathToFile = args[0];
     FileQuestionProvider fileQuestionProvider = new FileQuestionProvider(pathToFile);
     QuestionAskerMenu questionAskerMenu = new QuestionAskerMenuImpl();
     Set<Question> questions = fileQuestionProvider.getQuestions();
