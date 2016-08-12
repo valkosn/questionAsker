@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QuestionAsker</title>
+</head>
+<body>
+<h1><strong>Welcome to Question Asker!!!</strong></h1>
+<form name="test" method="post">
+
+    <p>Question<Br>
+        <textarea id="question" name="question" cols="40" rows="3">If you ready, press START. Good luck!</textarea></p>
+
+    <b>Choice the answer:</b>
+    <div id="answers"></div>
+
+    </p>
+    <p><input id="next" type="button" onclick="getNextQuestion()" value="Start">
+        <input type="reset" value="Clear"></p>
+
+
+    <script type="text/javascript">
+
+        var incomeDate = JSON.parse(getData());
+        var shuffledDate = shuffle(incomeDate);
+        var numberOfCurrantQuestion = 0;
+        var trueCurrantAnswer;
+        var totalTrueAnswers = 0;
+
+        function getData() {
+
+            return '[{"question": "Відкриті члени класу мають мати модифікатор доступу?","answers": ["public","private","protected","opened"]},{"question": "Методи члени класу це - ?", "answers": ["Функції-члени класу","Змінні-члени класу","Алгоритми на яких базується організація інформації та функціонування класу","Динамічно виділена область пам’яті"]},{"question": "Чи можна створити двовимірний динамічний масив цілочисельних змінних з оператором new?","answers": ["Так","Ні"]},{"question": "Чи можна створити двовимірний динамічний масив цілочисельних змінних з оператором new[]?","answers": ["Так","Ні"]},{"question": "Клас визначає новий тип даних, який задає формат?","answers": ["об’єкта","суб’єкта","змінної","функції"]}]';
+        }
+
+        function shuffle(a) {
+            var j, x, i;
+            for (i = a.length; i; i--) {
+                j = Math.floor(Math.random() * i);
+                x = a[i - 1];
+                a[i - 1] = a[j];
+                a[j] = x;
+            }
+            return a;
+        }
+
+        function getRandomQuestion(data) {
+            var randomNumber = Math.round(Math.random() * data.length);
+            return data[randomNumber.valueOf()];
+        }
+
+        function checkCurrantQuestion() {
+            var radios = document.getElementsByName('answer');
+            var userChoice;
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].type === 'radio' && radios[i].checked) {
+                    userChoice = radios[i].value;
+                }
+            }
+            if (userChoice === null) {
+                return false;
+            } else if (trueCurrantAnswer === userChoice) {
+                totalTrueAnswers++;
+                //alert("TRUE");
+            } else {
+                //alert("FALSE");
+            }
+        }
+
+        function getNextQuestion() {
+            if (trueCurrantAnswer != null) {
+                checkCurrantQuestion();
+            } else {
+                document.getElementById("next").setAttribute("value", "Next");
+            }
+            if (incomeDate.length > numberOfCurrantQuestion) {
+                var questionObject = shuffledDate[numberOfCurrantQuestion];
+                var question = questionObject.question;
+                var answers = questionObject.answers;
+                trueCurrantAnswer = answers[0];
+                numberOfCurrantQuestion++;
+                renderQuestionAndAnswers(question, shuffle(answers));
+            }else {
+                alert("Your result " + totalTrueAnswers + " of " + numberOfCurrantQuestion + " questions");
+            }
+        }
+
+        function renderQuestionAndAnswers(question, answers) {
+
+            var questionBox = document.getElementById("question");
+            questionBox.disabled = false;
+            questionBox.innerHTML = question.toString();
+
+            var number = answers.length;
+            var container = document.getElementById("answers");
+            while (container.hasChildNodes()) {
+                container.removeChild(container.lastChild);
+            }
+            for (var i = 0; i < number; i++) {
+                var input = document.createElement("input");
+                input.type = "radio";
+                input.name = "answer";
+                input.setAttribute("value", answers[i]);
+                container.appendChild(input);
+                container.appendChild(document.createTextNode(answers[i]));
+                container.appendChild(document.createElement("br"));
+            }
+        }
+    </script>
+
+</form>
+
+
+</body>
+</html>
