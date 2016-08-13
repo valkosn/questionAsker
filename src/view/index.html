@@ -11,23 +11,50 @@
 <h1><strong>Welcome to Question Asker!!!</strong></h1>
 <form name="test" method="post">
 
-    <div class="title" id="questionTitle"><Br></div>
-    <textarea id="question" name="question" cols="50" rows="4"
-                  readonly>If you are ready, press START. Good luck!</textarea>
+    <div id="start_screen_holder">
 
-    <div class="title" id="answersTitle"></div>
-    <div class="answers" id="answers"></div>
-    <div class="message" id="message"></div>
+        <div id="prompt">If you are ready, press START. Good luck!</div>
 
-    <p><input id="next" type="button" onclick="getNextQuestion()" value="Start">
-        <input id="reload" type="button" onclick="history.go(0)" value="Restart">
-        <select id="questionsAmount" title="Amount of questions"  onclick="addMaxValueToQuestionAmount()">
+        <input id="start" type="button" onclick="startTest()" value="Start">
+        <input name="restart" type="button" onclick="history.go(0)" value="Restart">
+        <select id="questionsAmount" title="Amount of questions" onclick="addMaxValueToQuestionAmount()">
             <option value="5">5 questions</option>
             <option value="10">10 questions</option>
             <option value="25">25 questions</option>
             <option value="50">50 questions</option>
             <option value="100">100 questions</option>
-        </select></p>
+        </select>
+    </div>
+    <div id="test_answers">
+
+        <div id="qa_holder_template" style="display: none;">
+            <label for="question" class="title" id="questionTitle">Question:</label>
+            <div id="question"></div>
+
+            <label class="title" for="answers" id="answersTitle">Choice the answer:</label>
+            <div class="answers" id="answers">
+                <label>
+                    <input type="radio" name="answer"/>
+                    <span id="answerText"></span>
+                </label>
+            </div>
+
+            <input id="nextQuestion" type="button" value="Next question"/>
+            <input name="restart" type="button" value="Restart"/>
+        </div>
+    </div>
+
+    <div id="result_screen" style="display: none;">
+
+        <div id="results_holder">
+            <ul id="results">
+                <li></li>
+            </ul>
+        </div>
+
+        <input name="review" type="button" value="Review"/>
+        <input id="newAttempt" type="button" value="New attempt"/>
+    </div>
 </form>
 
 
