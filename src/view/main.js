@@ -63,8 +63,12 @@ function getNextQuestion() {
     } else {
         document.getElementById("next").hidden = "true";
         document.getElementById("questionTitle").innerHTML = "Result:"
-        document.getElementById("message").innerHTML = "wdksgdf";
-        // alert("Your result " + totalTrueAnswers + " of " + numberOfCurrantQuestion + " questions");
+        var container = document.getElementById("answers");
+        clearContainer(container);
+        document.getElementById("answersTitle").setAttribute("hidden", "true");
+        var percents = Math.round(totalTrueAnswers / numberOfCurrantQuestion *100);
+        document.getElementById("question").innerHTML = "Your result " +
+            percents + "%. This is " + totalTrueAnswers + " of " + numberOfCurrantQuestion + " questions.";
     }
 }
 
@@ -76,9 +80,9 @@ function renderQuestionAndAnswers(question, answers) {
 
     var number = answers.length;
     var container = document.getElementById("answers");
-    while (container.hasChildNodes()) {
-        container.removeChild(container.lastChild);
-    }
+
+    clearContainer(container)
+
     for (var i = 0; i < number; i++) {
         var input = document.createElement("input");
         input.type = "radio";
@@ -97,5 +101,11 @@ function addMaxValueToQuestionAmount() {
         elem.setAttribute("value", incomeDate.length.toString());
         elem.innerHTML = incomeDate.length.toString();
         container.appendChild(elem);
+    }
+}
+
+function clearContainer(container) {
+    while (container.hasChildNodes()) {
+        container.removeChild(container.lastChild);
     }
 }
