@@ -99,7 +99,7 @@ function addMaxValueToQuestionAmount() {
     if (container.length <= 5) {
         var elem = document.createElement("option");
         elem.setAttribute("value", incomeDate.length.toString());
-        elem.innerHTML = incomeDate.length.toString();
+        elem.innerHTML = incomeDate.length.toString() + " questions";
         container.appendChild(elem);
     }
 }
