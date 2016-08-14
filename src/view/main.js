@@ -90,34 +90,6 @@ function checkCurrantQuestion() {
 function startTest() {
     document.getElementById("start_screen_holder").hide();
     getNextQuestion(1);
-
-    // if (trueCurrantAnswer != null) {
-    //     checkCurrantQuestion();
-    // } else {
-    //     var elem = document.getElementById("questionsAmount");
-    //     questionsAmount = elem.options[elem.selectedIndex].value;
-    //     elem.hide();
-    //     document.getElementById("next").setAttribute("value", "Next");
-    //     document.getElementById("questionTitle").innerHTML = "Question:";
-    //     document.getElementById("answersTitle").innerHTML = "Choice the answer:";
-    // }
-    // if (questionsAmount > numberOfCurrantQuestion) {
-    //     var questionObject = shuffledData[numberOfCurrantQuestion];
-    //     var question = questionObject.question;
-    //     var answers = questionObject.answers;
-    //     trueCurrantAnswer = answers[0];
-    //     numberOfCurrantQuestion++;
-    //     renderQuestionAndAnswers(question, shuffle(answers));
-    // } else {
-    //     document.getElementById("next").hide();
-    //     document.getElementById("questionTitle").innerHTML = "Result:";
-    //     var container = document.getElementById("answers");
-    //     clearContainer(container);
-    //     document.getElementById("answersTitle").hide();
-    //     var percents = Math.round(totalTrueAnswers / numberOfCurrantQuestion *100);
-    //     document.getElementById("question").innerHTML = "Your result " +
-    //         percents + "%. This is " + totalTrueAnswers + " of " + numberOfCurrantQuestion + " questions.";
-    // }
 }
 
 function getCorrectAnswer(questionNumber) {
@@ -129,14 +101,6 @@ function getNextQuestion(questionNumber){
     var question = questionObject.question;
     var answers = questionObject.answers.clone();
     renderQuestionAndAnswers(question, shuffle(answers), questionNumber);
-}
-
-function cloneAndAppendElementById(targetId, destinationId, idForCopy) {
-    var node = document.getElementById(targetId).cloneNode(true);
-    node.id = idForCopy;
-    var destinationElement = document.getElementById(destinationId);
-    destinationElement.appendChild(node);
-    return document.getElementById(idForCopy);
 }
 
 function renderQuestionAndAnswers(question, answers, questionNumber) {
@@ -182,11 +146,5 @@ function addMaxValueToQuestionAmount() {
         elem.setAttribute("value", incomeData.length.toString());
         elem.innerHTML = incomeData.length.toString() + " questions";
         container.appendChild(elem);
-    }
-}
-
-function clearContainer(container) {
-    while (container.hasChildNodes()) {
-        container.removeChild(container.lastChild);
     }
 }
