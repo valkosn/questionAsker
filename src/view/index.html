@@ -25,24 +25,25 @@
             <option value="100">100 questions</option>
         </select>
     </div>
-    <div id="test_answers">
 
-        <div id="qa_holder_template" style="display: none;">
-            <label for="question" class="title" id="questionTitle">Question:</label>
-            <div id="question"></div>
+    <div id="test_answers"></div>
 
-            <label class="title" for="answers" id="answersTitle">Choice the answer:</label>
-            <div class="answers" id="answers">
-                <label>
-                    <input type="radio" name="answer"/>
-                    <span id="answerText"></span>
-                </label>
-            </div>
+    <div id="question_holder_" style="display: none;">
+        <label class="title">Question:
+            <span id="question_"></span>
+        </label>
 
-            <input id="nextQuestion" type="button" value="Next question"/>
-            <input name="restart" type="button" value="Restart"/>
-        </div>
+        <label class="title">Choice the answer:</label>
+        <div id="answer_container_"></div>
+        <input name="nextQuestion" type="button" value="Next question" onclick = "getNextQuestion(parseInt(this.getAttribute('data-questionnumber')) + 1)"/>
+        <input name="restart" type="button" value="Restart"/>
     </div>
+
+    <label id="answer_holder_" style="display: none;">
+        <input type="radio" name="answer_"/>
+        <span id="answer_text_"></span>
+    </label>
+
 
     <div id="result_screen" style="display: none;">
 

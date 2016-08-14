@@ -8,6 +8,59 @@ var trueCurrantAnswer;
 var totalTrueAnswers = 0;
 var questionsAmount;
 
+Element.prototype.hide = function(){
+    this.setAttribute("style", "display: none");
+};
+
+Element.prototype.show = function(){
+    this.setAttribute("style", "display: block");
+};
+
+Array.prototype.clone = function() {
+    return this.slice(0);
+};
+
+Node.prototype.findChildById = function (id) {
+    var children = this.childNodes;
+    for (var i = (children.length - 1); i >= 0; i--){
+        var child = children[i];
+        if(child.id === id){
+            return child;
+        }
+        var result = child.findChildById(id);
+        if (result != null) {
+            return result;
+        }
+    }
+    return null;
+};
+
+Node.prototype.findChildByName = function (name) {
+    var children = this.childNodes;
+    for (var i = (children.length - 1); i >= 0; i--){
+        var child = children[i];
+        if(child.name === name){
+            return child;
+        }
+        var result = child.findChildByName(name);
+        if (result != null) {
+            return result;
+        }
+    }
+    return null;
+};
+
+String.prototype.hashCode = function() {
+    var hash = 0, i, chr, len;
+    if (this.length === 0) return hash;
+    for (i = 0, len = this.length; i < len; i++) {
+        chr   = this.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
 function shuffle(a) {
     var j, x, i;
     for (i = a.length; i; i--) {
@@ -72,23 +125,11 @@ function getCorrectAnswer(questionNumber) {
 }
 
 function getNextQuestion(questionNumber){
-    var questionObject = shuffledData[numberOfCurrantQuestion];
+    var questionObject = shuffledData[questionNumber];
     var question = questionObject.question;
     var answers = questionObject.answers.clone();
     renderQuestionAndAnswers(question, shuffle(answers), questionNumber);
 }
-
-Element.prototype.hide = function(){
-    this.setAttribute("hidden", "true");
-};
-
-Element.prototype.show = function(){
-    this.setAttribute("hidden", "false");
-};
-
-Array.prototype.clone = function() {
-    return this.slice(0);
-};
 
 function cloneAndAppendElementById(targetId, destinationId, idForCopy) {
     var node = document.getElementById(targetId).cloneNode(true);
@@ -99,24 +140,39 @@ function cloneAndAppendElementById(targetId, destinationId, idForCopy) {
 }
 
 function renderQuestionAndAnswers(question, answers, questionNumber) {
-    var idForCopyQuestion = 'qa_' + questionNumber;
-    var questionBox = cloneAndAppendElementById("qa_holder_template", "test_answers", idForCopyQuestion);
+    var questionContainer = document.getElementById("question_holder_").cloneNode(true);
+    questionContainer.show();
+    questionContainer.id = questionContainer.id + questionNumber;
+
+    var questionBox = questionContainer.findChildById("question_");
     questionBox.innerHTML = question.toString();
 
+    var answerContainer = questionContainer.findChildById("answer_container_");
+    answerContainer.id = answerContainer.id + questionNumber;
+
+    questionContainer.findChildByName("nextQuestion").setAttribute("data-questionNumber", questionNumber);
     var number = answers.length;
-    var questionContainer = document.getElementById(idForCopyQuestion);
-    var answerTemplate = questionContainer.getElementsByTagName("label");
+
     for (var i = 0; i < number; i++) {
-        var currentAnswer = answerTemplate;
-        if(i <= (number - 1)){
-            var idForCopyAnswer = 'answer_' + questionNumber;
-            currentAnswer = cloneAndAppendElementById("answers", idForCopyQuestion, idForCopyAnswer);
-        }
-        var input = currentAnswer.getElementsByName("answerContainer");
-        var span = currentAnswer.getElementById("answerText");
-        input.setAttribute("value", answers[i]);
-        span.innerHTML = answers[i];
+        answerContainer.appendChild(renderAnswer(questionNumber, i, answers[i]));
     }
+    document.getElementById("test_answers").appendChild(questionContainer);
+}
+
+function renderAnswer(questionNumber, answerNumber, answer){
+    var answerContainer = document.getElementById("answer_holder_").cloneNode(true);
+    answerContainer.show();
+    answerContainer.id = answerContainer.id + questionNumber + "_" + answerNumber;
+
+    var answerValue = answerContainer.findChildByName("answer_");
+    answerValue.name = answer.name + questionNumber;
+    answerValue.value = answer.hashCode();
+
+    var answerText = answerContainer.findChildById("answer_text_");
+    answerText.id = answerText.id + questionNumber + "_" + answerNumber;
+    answerText.innerHTML = answer;
+
+    return answerContainer;
 }
 
 function addMaxValueToQuestionAmount() {
