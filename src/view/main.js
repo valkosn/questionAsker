@@ -3,28 +3,36 @@
  */
 var incomeData = data;
 var shuffledData = shuffle(incomeData);
-var numberOfCurrantQuestion = 0;
-var trueCurrantAnswer;
-var totalTrueAnswers = 0;
 var questionsAmount;
+var currantQuestion = -1;
+var renderedQuestionsAmount = 0;
+var isResultsRendered = false;
 
-Element.prototype.hide = function(){
+Element.prototype.hide = function () {
     this.setAttribute("style", "display: none");
 };
 
-Element.prototype.show = function(){
+Element.prototype.show = function () {
     this.setAttribute("style", "display: block");
 };
 
-Array.prototype.clone = function() {
+Node.prototype.hideNode = function () {
+    this.style = "display: none";
+};
+
+Node.prototype.showNode = function () {
+    this.style = "display: inline block";
+};
+
+Array.prototype.clone = function () {
     return this.slice(0);
 };
 
 Node.prototype.findChildById = function (id) {
     var children = this.childNodes;
-    for (var i = (children.length - 1); i >= 0; i--){
+    for (var i = (children.length - 1); i >= 0; i--) {
         var child = children[i];
-        if(child.id === id){
+        if (child.id === id) {
             return child;
         }
         var result = child.findChildById(id);
@@ -37,9 +45,9 @@ Node.prototype.findChildById = function (id) {
 
 Node.prototype.findChildByName = function (name) {
     var children = this.childNodes;
-    for (var i = (children.length - 1); i >= 0; i--){
+    for (var i = (children.length - 1); i >= 0; i--) {
         var child = children[i];
-        if(child.name === name){
+        if (child.name === name) {
             return child;
         }
         var result = child.findChildByName(name);
@@ -50,12 +58,12 @@ Node.prototype.findChildByName = function (name) {
     return null;
 };
 
-String.prototype.hashCode = function() {
+String.prototype.hashCode = function () {
     var hash = 0, i, chr, len;
     if (this.length === 0) return hash;
     for (i = 0, len = this.length; i < len; i++) {
-        chr   = this.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
+        chr = this.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
     }
     return hash;
@@ -72,35 +80,88 @@ function shuffle(a) {
     return a;
 }
 
-function checkCurrantQuestion() {
-    var radios = document.getElementsByName('answer');
+function addMaxValueToQuestionAmount() {
+    var container = document.getElementById("questionsAmount");
+    if (container.length <= 5) {
+        var elem = document.createElement("option");
+        elem.setAttribute("value", incomeData.length.toString());
+        elem.innerHTML = incomeData.length.toString() + " questions";
+        container.appendChild(elem);
+    }
+}
+
+function checkQuestion(questionNumber) {
+    var radios = document.getElementsByName("answer_" + questionNumber);
     var userChoice;
     for (var i = 0; i < radios.length; i++) {
         if (radios[i].type === 'radio' && radios[i].checked) {
             userChoice = radios[i].value;
         }
+        var radiosText = document.getElementById("answer_text_" + questionNumber + "_" + i);
+        if (radios[i].value == getCorrectAnswer(questionNumber)) {
+            radiosText.setAttribute("style", "color: green;");
+        }
+        radios[i].disabled = "true";
     }
-    if (userChoice === null) {
+    if (userChoice != null) {
+        return getCorrectAnswer(questionNumber) == userChoice;
+    } else {
         return false;
-    } else if (trueCurrantAnswer === userChoice) {
-        totalTrueAnswers++;
     }
+}
+
+function checkForLastQuestion() {
+    if (currantQuestion == questionsAmount - 1) {
+        var currantHolder = document.getElementById("question_holder_" + currantQuestion);
+        currantHolder.findChildByName("finish").showNode();
+        currantHolder.findChildByName("nextQuestion").hideNode();
+    }
+}
+
+function hideCurrantQuestion() {
+    document.getElementById("question_holder_" + currantQuestion).hide();
 }
 
 function startTest() {
+    var questionsAmountElement = document.getElementById("questionsAmount");
+    questionsAmount = questionsAmountElement.options[questionsAmountElement.selectedIndex].value;
     document.getElementById("start_screen_holder").hide();
-    getNextQuestion(1);
+    getNextQuestion();
 }
 
 function getCorrectAnswer(questionNumber) {
-    return shuffledData[questionNumber].answer[0];
+    return shuffledData[questionNumber].answers[0].hashCode();
 }
 
-function getNextQuestion(questionNumber){
-    var questionObject = shuffledData[questionNumber];
-    var question = questionObject.question;
-    var answers = questionObject.answers.clone();
-    renderQuestionAndAnswers(question, shuffle(answers), questionNumber);
+function getNextQuestion() {
+    currantQuestion++;
+    var previousQuestion = document.getElementById("question_holder_" + (currantQuestion - 1));
+    if (previousQuestion != null && previousQuestion != undefined) {
+        previousQuestion.hide();
+    }
+    if (currantQuestion >= renderedQuestionsAmount) {
+
+        var questionObject = shuffledData[currantQuestion];
+        var question = questionObject.question;
+        var answers = questionObject.answers.clone();
+        renderQuestionAndAnswers(question, shuffle(answers), currantQuestion);
+        checkForLastQuestion();
+    } else {
+        document.getElementById("question_holder_" + currantQuestion).show();
+    }
+
+}
+
+function getPreviousQuestion() {
+    hideCurrantQuestion();
+    document.getElementById("question_holder_" + (currantQuestion - 1)).show();
+    currantQuestion--;
+}
+
+function getQuestion(questionNumber) {
+    document.getElementById("result_screen").hide();
+    document.getElementById("question_holder_" + questionNumber).show();
+    currantQuestion = questionNumber;
 }
 
 function renderQuestionAndAnswers(question, answers, questionNumber) {
@@ -114,37 +175,74 @@ function renderQuestionAndAnswers(question, answers, questionNumber) {
     var answerContainer = questionContainer.findChildById("answer_container_");
     answerContainer.id = answerContainer.id + questionNumber;
 
-    questionContainer.findChildByName("nextQuestion").setAttribute("data-questionNumber", questionNumber);
+    if (currantQuestion > 0) {
+
+        questionContainer.findChildByName("previousQuestion").disabled = false;
+    }
     var number = answers.length;
 
     for (var i = 0; i < number; i++) {
         answerContainer.appendChild(renderAnswer(questionNumber, i, answers[i]));
     }
     document.getElementById("test_answers").appendChild(questionContainer);
+    renderedQuestionsAmount++;
 }
 
-function renderAnswer(questionNumber, answerNumber, answer){
+function renderAnswer(questionNumber, answerNumber, answer) {
     var answerContainer = document.getElementById("answer_holder_").cloneNode(true);
     answerContainer.show();
     answerContainer.id = answerContainer.id + questionNumber + "_" + answerNumber;
 
     var answerValue = answerContainer.findChildByName("answer_");
-    answerValue.name = answer.name + questionNumber;
+    answerValue.name = answerValue.name + questionNumber;
     answerValue.value = answer.hashCode();
 
     var answerText = answerContainer.findChildById("answer_text_");
     answerText.id = answerText.id + questionNumber + "_" + answerNumber;
     answerText.innerHTML = answer;
-
     return answerContainer;
 }
 
-function addMaxValueToQuestionAmount() {
-    var container = document.getElementById("questionsAmount");
-    if (container.length <= 5) {
-        var elem = document.createElement("option");
-        elem.setAttribute("value", incomeData.length.toString());
-        elem.innerHTML = incomeData.length.toString() + " questions";
-        container.appendChild(elem);
+function renderResults() {
+    if (!isResultsRendered) {
+        hideCurrantQuestion();
+        var resultScreen = document.getElementById("result_screen");
+        resultScreen.show();
+        var resultsContainer = document.getElementById("results");
+        for (var i = 0; i < questionsAmount; i++) {
+            var resultItem = document.createElement("li");
+            resultItem.setAttribute("onclick", "getQuestion(" + i + ")");
+            resultItem.setAttribute("id", "result_" + i);
+            var suffix = "";
+            if (shuffledData[i].question.length > 80) {
+                suffix = " ...";
+            }
+            resultItem.innerHTML = i + 1 + " - " + shuffledData[i].question.substring(0, 80) + suffix;
+            resultsContainer.appendChild(resultItem);
+        }
+        isResultsRendered = true;
+    } else {
+        hideCurrantQuestion();
+        document.getElementById("result_screen").show();
+    }
+}
+
+function evaluateResults() {
+    for (var i = questionsAmount - 1; i >= 0; i--) {
+        var resultItem = document.getElementById("result_" + i);
+        if (checkQuestion(i)) {
+            resultItem.setAttribute("style", "color: green;");
+        } else {
+            resultItem.setAttribute("style", "color: red;");
+        }
+    }
+    document.getElementById("evaluate").setAttribute("disabled", "");
+}
+
+function newAttempt() {
+    var q = confirm("You really want to try again? All your results will be wipe!");
+    if (q) {
+        document.getElementById("evaluate").removeAttribute("disabled");
+        history.go(0);
     }
 }

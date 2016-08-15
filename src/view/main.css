@@ -2,8 +2,9 @@ body {
     padding: 5px;
 
 }
-
-
+li {
+    cursor: pointer;
+}
 
 .message {
     align-content: center;
@@ -15,4 +16,5 @@ body {
 
 .answers {
     padding: 5px;
+    cursor: pointer;
 }

@@ -16,7 +16,6 @@
         <div id="prompt">If you are ready, press START. Good luck!</div>
 
         <input id="start" type="button" onclick="startTest()" value="Start">
-        <input name="restart" type="button" onclick="history.go(0)" value="Restart">
         <select id="questionsAmount" title="Amount of questions" onclick="addMaxValueToQuestionAmount()">
             <option value="5">5 questions</option>
             <option value="10">10 questions</option>
@@ -35,26 +34,25 @@
 
         <label class="title">Choice the answer:</label>
         <div id="answer_container_"></div>
-        <input name="nextQuestion" type="button" value="Next question" onclick = "getNextQuestion(parseInt(this.getAttribute('data-questionnumber')) + 1)"/>
-        <input name="restart" type="button" value="Restart"/>
+        <input name="previousQuestion" type="button" value="Previous question" onclick = "getPreviousQuestion()" disabled/>
+        <input name="nextQuestion" type="button" value="Next question" onclick = "getNextQuestion()"/>
+        <input name="finish" type="button" value="Finish" onclick = "renderResults()" style="display: none;"/>
     </div>
 
     <label id="answer_holder_" style="display: none;">
-        <input type="radio" name="answer_"/>
-        <span id="answer_text_"></span>
+        <input type="radio" class="answers" name="answer_"/>
+        <span id="answer_text_" class="answers"></span>
     </label>
 
 
     <div id="result_screen" style="display: none;">
 
         <div id="results_holder">
-            <ul id="results">
-                <li></li>
-            </ul>
+            <ul id="results"></ul>
         </div>
 
-        <input name="review" type="button" value="Review"/>
-        <input id="newAttempt" type="button" value="New attempt"/>
+        <input id="evaluate" type="button" value="Evaluate" onclick = "evaluateResults()"/>
+        <input id="new_attempt" type="button" value="New attempt" onclick = "newAttempt()"/>
     </div>
 </form>
 
