@@ -113,8 +113,11 @@ function checkQuestion(questionNumber) {
 function checkForLastQuestion() {
     if (currantQuestion == questionsAmount - 1) {
         var currantHolder = document.getElementById("question_holder_" + currantQuestion);
-        currantHolder.findChildByName("finish").showNode();
         currantHolder.findChildByName("nextQuestion").hideNode();
+        var finishButtons = document.getElementsByName("finish");
+        for(var i = (finishButtons.length - 1); i >= 0; i--){
+            finishButtons[i].showNode();
+        }
     }
 }
 
