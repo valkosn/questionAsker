@@ -126,6 +126,7 @@ function startTest() {
     var questionsAmountElement = document.getElementById("questionsAmount");
     questionsAmount = questionsAmountElement.options[questionsAmountElement.selectedIndex].value;
     document.getElementById("start_screen_holder").hide();
+    document.getElementById("evaluate").removeAttribute("disabled");
     getNextQuestion();
 }
 
@@ -242,7 +243,6 @@ function evaluateResults() {
 function newAttempt() {
     var q = confirm("You really want to try again? All your results will be wipe!");
     if (q) {
-        document.getElementById("evaluate").removeAttribute("disabled");
         history.go(0);
     }
 }
