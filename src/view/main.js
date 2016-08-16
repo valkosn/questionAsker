@@ -115,7 +115,7 @@ function checkForLastQuestion() {
         var currantHolder = document.getElementById("question_holder_" + currantQuestion);
         currantHolder.findChildByName("nextQuestion").hideNode();
         var finishButtons = document.getElementsByName("finish");
-        for(var i = (finishButtons.length - 1); i >= 0; i--){
+        for (var i = (finishButtons.length - 1); i >= 0; i--) {
             finishButtons[i].showNode();
         }
     }
@@ -172,6 +172,11 @@ function renderQuestionAndAnswers(question, answers, questionNumber) {
     var questionContainer = document.getElementById("question_holder_").cloneNode(true);
     questionContainer.show();
     questionContainer.id = questionContainer.id + questionNumber;
+
+    var questionTitle = questionContainer.findChildById("title_");
+    questionTitle.id = questionTitle.id + questionNumber;
+    var navPoint = questionNumber + 1 + "/" + questionsAmount;
+    questionTitle.innerHTML = questionTitle.innerHTML.toString().replace("{{qn/qa}}", navPoint);
 
     var questionBox = questionContainer.findChildById("question_");
     questionBox.innerHTML = question.toString();
@@ -232,15 +237,21 @@ function renderResults() {
 }
 
 function evaluateResults() {
+    var truAnswersAmount = 0;
     for (var i = questionsAmount - 1; i >= 0; i--) {
         var resultItem = document.getElementById("result_" + i);
         if (checkQuestion(i)) {
             resultItem.setAttribute("style", "color: green;");
+            truAnswersAmount++;
         } else {
             resultItem.setAttribute("style", "color: red;");
         }
     }
     document.getElementById("evaluate").setAttribute("disabled", "");
+    var resultPersent = Math.round(truAnswersAmount / questionsAmount * 100);
+    var resultString = "Your result is " + resultPersent + "%. "
+        + "You answer right for " + truAnswersAmount + " question(s) from " + questionsAmount;
+    document.getElementById("resultMessage").innerHTML = resultString;
 }
 
 function newAttempt() {

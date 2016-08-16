@@ -7,41 +7,51 @@
     <script src="./resources/QuestionsDB.js" type="text/javascript"></script>
     <script src="main.js" type="text/javascript"></script>
 </head>
+<header>
+    <div class="header_message">
+        !!!Don't reload page!!! If you do it all your results will be wipe!!!
+    </div>
+</header>
 <body>
 <h1><strong>Welcome to Question Asker!!!</strong></h1>
-<form name="test" method="post">
+<form id="form" name="test" method="post">
 
-    <div id="start_screen_holder">
+    <div id="start_screen_holder" rel="main">
 
         <div id="prompt">If you are ready, press START. Good luck!</div>
 
-        <input id="start" type="button" onclick="startTest()" value="Start">
-        <select id="questionsAmount" title="Amount of questions" onclick="addMaxValueToQuestionAmount()">
-            <option value="5">5 questions</option>
-            <option value="10">10 questions</option>
-            <option value="25">25 questions</option>
-            <option value="50">50 questions</option>
-            <option value="100">100 questions</option>
-        </select>
+        <div class="control_container">
+            <input id="start" type="button" onclick="startTest()" value="Start">
+            <select id="questionsAmount" title="Amount of questions" onclick="addMaxValueToQuestionAmount()">
+                <option value="5">5 questions</option>
+                <option value="10">10 questions</option>
+                <option value="25">25 questions</option>
+                <option value="50" selected="selected">50 questions</option>
+                <option value="100">100 questions</option>
+            </select>
+        </div>
     </div>
 
     <div id="test_answers"></div>
 
-    <div id="question_holder_" style="display: none;">
-        <label class="title">Question:
-            <span id="question_"></span>
+    <div id="question_holder_" class="questions" style="display: none;">
+        <label id="title_" class="title">Question: {{qn/qa}}
+            <span id="question_" class="question"></span>
         </label>
 
         <label class="title">Choice the answer:</label>
         <div id="answer_container_"></div>
-        <input name="previousQuestion" type="button" value="Previous question" onclick = "getPreviousQuestion()" disabled/>
-        <input name="nextQuestion" type="button" value="Next question" onclick = "getNextQuestion()"/>
-        <input name="finish" type="button" value="Finish" onclick = "renderResults()" style="display: none;"/>
+        <div class="control_container">
+            <input name="previousQuestion" type="button" value="Previous question" onclick="getPreviousQuestion()"
+                   disabled/>
+            <input name="nextQuestion" type="button" value="Next question" onclick="getNextQuestion()"/>
+            <input name="finish" type="button" value="Result" onclick="renderResults()" style="display: none;"/>
+        </div>
     </div>
 
-    <label id="answer_holder_" style="display: none;">
-        <input type="radio" class="answers" name="answer_"/>
-        <span id="answer_text_" class="answers"></span>
+    <label id="answer_holder_" class="answers" style="display: none;">
+        <input type="radio" name="answer_"/>
+        <span id="answer_text_"></span>
     </label>
 
 
@@ -51,11 +61,12 @@
             <ul id="results"></ul>
         </div>
 
-        <input id="evaluate" type="button" value="Evaluate" onclick = "evaluateResults()"/>
-        <input id="new_attempt" type="button" value="New attempt" onclick = "newAttempt()"/>
+        <div class="control_container">
+            <input id="evaluate" type="button" value="Evaluate" onclick="evaluateResults()"/>
+            <input id="new_attempt" type="button" value="New attempt" onclick="newAttempt()"/>
+            <div id="resultMessage"></div>
+        </div>
     </div>
 </form>
-
-
 </body>
 </html>
