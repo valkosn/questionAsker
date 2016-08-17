@@ -22,12 +22,21 @@
 
         <div class="control_container">
             <input id="start" type="button" onclick="startTest()" value="Start">
-            <select id="questionsAmount" title="Amount of questions" onclick="addMaxValueToQuestionAmount()">
+            <select id="questions_amount" title="Amount of questions" onclick="addMaxValueToQuestionAmount()">
                 <option value="5">5 questions</option>
                 <option value="10">10 questions</option>
                 <option value="25">25 questions</option>
                 <option value="50" selected="selected">50 questions</option>
                 <option value="100">100 questions</option>
+            </select>
+            <select id="time_per_question" title="Time per question">
+                <option value="1">1 sec/question</option>
+                <option value="30">30 sec/question</option>
+                <option value="60">1 min/question</option>
+                <option value="120" selected="selected">2 min/question</option>
+                <option value="300">5 min/question</option>
+                <option value="600">10 min/question</option>
+                <option value="-1">unlimited time</option>
             </select>
         </div>
     </div>
@@ -42,18 +51,19 @@
         <label class="title">Choice the answer:</label>
         <div id="answer_container_"></div>
         <div class="control_container">
-            <input name="previousQuestion" type="button" value="Previous question" onclick="getPreviousQuestion()"
+            <input name="previous_question" type="button" value="Previous question" onclick="getPreviousQuestion()"
                    disabled/>
-            <input name="nextQuestion" type="button" value="Next question" onclick="getNextQuestion()"/>
+            <input name="next_question" type="button" value="Next question" onclick="getNextQuestion()"/>
             <input name="finish" type="button" value="Result" onclick="renderResults()" style="display: none;"/>
         </div>
     </div>
+
+    <div id="time_holder"></div>
 
     <label id="answer_holder_" class="answers" style="display: none;">
         <input type="radio" name="answer_"/>
         <span id="answer_text_"></span>
     </label>
-
 
     <div id="result_screen" style="display: none;">
 
@@ -64,7 +74,7 @@
         <div class="control_container">
             <input id="evaluate" type="button" value="Evaluate" onclick="evaluateResults()"/>
             <input id="new_attempt" type="button" value="New attempt" onclick="newAttempt()"/>
-            <div id="resultMessage"></div>
+            <div id="result_message"></div>
         </div>
     </div>
 </form>

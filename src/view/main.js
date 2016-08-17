@@ -4,9 +4,16 @@
 var incomeData = data;
 var shuffledData = shuffle(incomeData);
 var questionsAmount;
+var timePerQuestion;
 var currantQuestion = -1;
 var renderedQuestionsAmount = 0;
 var isResultsRendered = false;
+var isEvaluated = false;
+var timeStart;
+var timeToEnd;
+var diffTime;
+var isMinusCount = true;
+
 
 Element.prototype.hide = function () {
     this.setAttribute("style", "display: none");
@@ -81,7 +88,7 @@ function shuffle(a) {
 }
 
 function addMaxValueToQuestionAmount() {
-    var container = document.getElementById("questionsAmount");
+    var container = document.getElementById("questions_amount");
     if (container.length <= 5) {
         var elem = document.createElement("option");
         elem.setAttribute("value", incomeData.length.toString());
@@ -113,7 +120,7 @@ function checkQuestion(questionNumber) {
 function checkForLastQuestion() {
     if (currantQuestion == questionsAmount - 1) {
         var currantHolder = document.getElementById("question_holder_" + currantQuestion);
-        currantHolder.findChildByName("nextQuestion").hideNode();
+        currantHolder.findChildByName("next_question").hideNode();
         var finishButtons = document.getElementsByName("finish");
         for (var i = (finishButtons.length - 1); i >= 0; i--) {
             finishButtons[i].showNode();
@@ -126,8 +133,19 @@ function hideCurrantQuestion() {
 }
 
 function startTest() {
-    var questionsAmountElement = document.getElementById("questionsAmount");
+    timeStart = new Date();
+    var questionsAmountElement = document.getElementById("questions_amount");
+    var timePerQuestionElement = document.getElementById("time_per_question");
     questionsAmount = questionsAmountElement.options[questionsAmountElement.selectedIndex].value;
+    timePerQuestion = timePerQuestionElement.options[timePerQuestionElement.selectedIndex].value;
+    if (timePerQuestion == -1) {
+        isMinusCount = false;
+    } else {
+        var allTime = questionsAmount * timePerQuestion;
+        timeToEnd = new Date();
+        timeToEnd.setSeconds(timeToEnd.getSeconds() + allTime);
+    }
+    time();
     document.getElementById("start_screen_holder").hide();
     document.getElementById("evaluate").removeAttribute("disabled");
     getNextQuestion();
@@ -162,6 +180,7 @@ function getPreviousQuestion() {
     currantQuestion--;
 }
 
+//TODO: fix to call this function
 function getQuestion(questionNumber) {
     document.getElementById("result_screen").hide();
     document.getElementById("question_holder_" + questionNumber).show();
@@ -186,7 +205,7 @@ function renderQuestionAndAnswers(question, answers, questionNumber) {
 
     if (currantQuestion > 0) {
 
-        questionContainer.findChildByName("previousQuestion").disabled = false;
+        questionContainer.findChildByName("previous_question").disabled = false;
     }
     var number = answers.length;
 
@@ -237,6 +256,7 @@ function renderResults() {
 }
 
 function evaluateResults() {
+    isEvaluated = true;
     var truAnswersAmount = 0;
     for (var i = questionsAmount - 1; i >= 0; i--) {
         var resultItem = document.getElementById("result_" + i);
@@ -248,15 +268,53 @@ function evaluateResults() {
         }
     }
     document.getElementById("evaluate").setAttribute("disabled", "");
-    var resultPersent = Math.round(truAnswersAmount / questionsAmount * 100);
-    var resultString = "Your result is " + resultPersent + "%. "
-        + "You answer right for " + truAnswersAmount + " question(s) from " + questionsAmount;
-    document.getElementById("resultMessage").innerHTML = resultString;
+    var resultPercent = Math.round(truAnswersAmount / questionsAmount * 100);
+    var spentTimeElement = document.getElementById("time_holder");
+    spentTimeElement.hide();
+    var resultTime = isMinusCount ? ". The remaining time is " + spentTimeElement.innerHTML : ". Spent time " + spentTimeElement.innerHTML;
+    var resultString = "Your result is " + resultPercent + "%. "
+        + "You answer right for " + truAnswersAmount + " question(s) from " + questionsAmount
+        + resultTime;
+    document.getElementById("result_message").innerHTML = resultString;
 }
 
 function newAttempt() {
     var q = confirm("You really want to try again? All your results will be wipe!");
     if (q) {
         history.go(0);
+    }
+}
+
+function time() {
+    var timeNow = new Date();
+    if (isMinusCount) {
+        diffTime = Math.floor((timeToEnd - timeNow) / 1000);
+    } else {
+        diffTime = Math.floor((timeNow - timeStart) / 1000);
+    }
+    if (diffTime < 0) {
+        isEvaluated = true;
+    }
+    if (!isEvaluated) {
+        var tSec = diffTime % 60;
+        diffTime = Math.floor(diffTime / 60);
+        if (tSec < 10)tSec = "0" + tSec;
+        var tMin = diffTime % 60;
+        diffTime = Math.floor(diffTime / 60);
+        if (tMin < 10)tMin = "0" + tMin;
+        var tHour = diffTime % 24;
+        diffTime = Math.floor(diffTime / 24);
+        document.getElementById("time_holder").innerHTML =
+            (diffTime != 0 ? diffTime + " day " : "")
+            + (tHour != 0 ? tHour + " hour " : "")
+            + (tMin != 0 ? tMin + " min " : "")
+            + (tSec != 0 ? tSec + " sec" : "");
+        window.setTimeout("time()", 1000);
+    } else {
+        while (currantQuestion < questionsAmount - 1) {
+            getNextQuestion();
+        }
+        renderResults();
+        evaluateResults();
     }
 }

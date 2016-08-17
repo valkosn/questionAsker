@@ -28,7 +28,8 @@ label#title {
     font-size: 12px;
 }
 
-.title, .question {
+.title,
+.question {
     display: block;
 }
 
@@ -38,7 +39,7 @@ label#title {
     text-align: center;
 }
 
-div#resultMessage{
+div#result_message{
     display: inline-block;
 }
 
